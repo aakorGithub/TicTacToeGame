@@ -3,6 +3,7 @@ class TicTacToe {
         this.board = Array(9).fill('');
         this.currentPlayer = 'X';
         this.gameActive = true;
+        this.gameMode = '2player';
         this.winningPatterns = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
             [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
@@ -13,6 +14,7 @@ class TicTacToe {
         this.statusDisplay = document.getElementById('status');
         this.cells = document.querySelectorAll('.cell');
         this.resetButton = document.getElementById('resetButton');
+        this.modeButtons = document.querySelectorAll('.mode-button');
 
         this.initializeGame();
     }
@@ -23,6 +25,18 @@ class TicTacToe {
         });
 
         this.resetButton.addEventListener('click', () => this.resetGame());
+        this.modeButtons.forEach(button => {
+            button.addEventListener('click', () => this.setGameMode(button.dataset.mode));
+        });
+    }
+
+    setGameMode(mode) {
+        this.gameMode = mode;
+        this.modeButtons.forEach(button => {
+            const isActive = button.dataset.mode === mode;
+            button.classList.toggle('active', isActive);
+        });
+        this.resetGame();
     }
 
     ensureAudioContext() {
@@ -75,10 +89,92 @@ class TicTacToe {
         oscillator.stop(context.currentTime + config.duration);
     }
 
+    getAvailableMoves() {
+        return this.board
+            .map((cell, index) => (cell === '' ? index : null))
+            .filter(index => index !== null);
+    }
+
+    findBestMove() {
+        const availableMoves = this.getAvailableMoves();
+
+        for (const move of availableMoves) {
+            this.board[move] = 'O';
+            if (this.checkWin()) {
+                this.board[move] = '';
+                return move;
+            }
+            this.board[move] = '';
+        }
+
+        for (const move of availableMoves) {
+            this.board[move] = 'X';
+            if (this.checkWin()) {
+                this.board[move] = '';
+                return move;
+            }
+            this.board[move] = '';
+        }
+
+        const center = [4];
+        if (this.board[4] === '') {
+            return 4;
+        }
+
+        const corners = [0, 2, 6, 8].filter(index => this.board[index] === '');
+        if (corners.length > 0) {
+            return corners[Math.floor(Math.random() * corners.length)];
+        }
+
+        return availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    }
+
+    makeComputerMove() {
+        if (!this.gameActive || this.gameMode !== 'cpu' || this.currentPlayer !== 'O') {
+            return;
+        }
+
+        const move = this.findBestMove();
+
+        if (move === undefined) {
+            return;
+        }
+
+        setTimeout(() => {
+            const cell = document.querySelector(`[data-index="${move}"]`);
+            if (cell && this.board[move] === '') {
+                this.board[move] = 'O';
+                cell.textContent = 'O';
+                this.playSound('move');
+
+                if (this.checkWin()) {
+                    this.statusDisplay.textContent = 'Player O wins!';
+                    this.gameActive = false;
+                    this.playSound('win');
+                    return;
+                }
+
+                if (this.checkDraw()) {
+                    this.statusDisplay.textContent = 'Game ended in a draw!';
+                    this.gameActive = false;
+                    this.playSound('draw');
+                    return;
+                }
+
+                this.currentPlayer = 'X';
+                this.statusDisplay.textContent = "Player X's turn";
+            }
+        }, 800);
+    }
+
     handleCellClick(cell) {
-        const index = cell.getAttribute('data-index');
+        const index = Number(cell.getAttribute('data-index'));
 
         if (this.board[index] !== '' || !this.gameActive) {
+            return;
+        }
+
+        if (this.gameMode === 'cpu' && this.currentPlayer === 'O') {
             return;
         }
 
@@ -94,7 +190,7 @@ class TicTacToe {
         }
 
         if (this.checkDraw()) {
-            this.statusDisplay.textContent = "Game ended in a draw!";
+            this.statusDisplay.textContent = 'Game ended in a draw!';
             this.gameActive = false;
             this.playSound('draw');
             return;
@@ -102,6 +198,10 @@ class TicTacToe {
 
         this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
         this.statusDisplay.textContent = `Player ${this.currentPlayer}'s turn`;
+
+        if (this.gameMode === 'cpu' && this.currentPlayer === 'O') {
+            this.makeComputerMove();
+        }
     }
 
     checkWin() {
