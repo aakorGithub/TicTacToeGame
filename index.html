@@ -31,19 +31,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 100%;
-            padding: 4px 16px 0;
+            width: min(100%, 900px);
+            gap: 12px;
+            padding: 4px 12px 0;
             color: white;
-            font-size: 0.82rem;
+            font-size: clamp(0.62rem, 1vw, 0.82rem);
             font-weight: bold;
             letter-spacing: 0.03em;
+            box-sizing: border-box;
         }
 
         .left-text,
         .right-text {
+            flex: 1 1 0;
+            min-width: 0;
             text-align: left;
             color: yellowgreen;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .right-text {
