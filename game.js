@@ -204,7 +204,7 @@ class TicTacToe {
                 }
 
                 this.currentPlayer = 'X';
-                this.statusDisplay.textContent = "Player X's turn";
+                this.statusDisplay.textContent = "Player X's Turn";
             }
         }, this.difficulty === 'hard' ? 700 : 1100);
     }
@@ -243,7 +243,7 @@ class TicTacToe {
         }
 
         this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
-        this.statusDisplay.textContent = `Player ${this.currentPlayer}'s turn`;
+        this.statusDisplay.textContent = `Player ${this.currentPlayer}'s Turn`;
 
         if (this.gameMode === 'cpu' && this.currentPlayer === 'O') {
             this.makeComputerMove();
@@ -267,7 +267,7 @@ class TicTacToe {
         this.currentPlayer = 'X';
         this.gameActive = true;
         this.hideOverlay();
-        this.statusDisplay.textContent = `Player ${this.currentPlayer}'s turn`;
+        this.statusDisplay.textContent = `Player ${this.currentPlayer}'s Turn`;
         this.cells.forEach(cell => {
             cell.textContent = '';
         });
