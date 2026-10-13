@@ -4,6 +4,8 @@ class TicTacToe {
         this.currentPlayer = 'X';
         this.gameActive = true;
         this.gameMode = '2player';
+        this.difficulty = 'easy';
+        this.score = { X: 0, O: 0 };
         this.winningPatterns = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
             [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
@@ -12,9 +14,16 @@ class TicTacToe {
 
         this.audioContext = null;
         this.statusDisplay = document.getElementById('status');
+        this.scoreX = document.getElementById('scoreX');
+        this.scoreO = document.getElementById('scoreO');
         this.cells = document.querySelectorAll('.cell');
         this.resetButton = document.getElementById('resetButton');
         this.modeButtons = document.querySelectorAll('.mode-button');
+        this.difficultyButtons = document.querySelectorAll('.difficulty-button');
+        this.gameOverlay = document.getElementById('gameOverlay');
+        this.overlayTitle = document.getElementById('overlayTitle');
+        this.overlayText = document.getElementById('overlayText');
+        this.playAgainButton = document.getElementById('playAgainButton');
 
         this.initializeGame();
     }
@@ -25,9 +34,15 @@ class TicTacToe {
         });
 
         this.resetButton.addEventListener('click', () => this.resetGame());
+        this.playAgainButton.addEventListener('click', () => this.resetGame());
         this.modeButtons.forEach(button => {
             button.addEventListener('click', () => this.setGameMode(button.dataset.mode));
         });
+        this.difficultyButtons.forEach(button => {
+            button.addEventListener('click', () => this.setDifficulty(button.dataset.difficulty));
+        });
+
+        this.updateScoreboard();
     }
 
     setGameMode(mode) {
@@ -37,6 +52,30 @@ class TicTacToe {
             button.classList.toggle('active', isActive);
         });
         this.resetGame();
+    }
+
+    setDifficulty(level) {
+        this.difficulty = level;
+        this.difficultyButtons.forEach(button => {
+            const isActive = button.dataset.difficulty === level;
+            button.classList.toggle('active', isActive);
+        });
+        this.resetGame();
+    }
+
+    showOverlay(title, message) {
+        this.overlayTitle.textContent = title;
+        this.overlayText.textContent = message;
+        this.gameOverlay.classList.add('show');
+    }
+
+    hideOverlay() {
+        this.gameOverlay.classList.remove('show');
+    }
+
+    updateScoreboard() {
+        this.scoreX.textContent = this.score.X;
+        this.scoreO.textContent = this.score.O;
     }
 
     ensureAudioContext() {
@@ -116,14 +155,13 @@ class TicTacToe {
             this.board[move] = '';
         }
 
-        const center = [4];
-        if (this.board[4] === '') {
-            return 4;
-        }
+        if (this.difficulty === 'hard') {
+            if (this.board[4] === '') return 4;
 
-        const corners = [0, 2, 6, 8].filter(index => this.board[index] === '');
-        if (corners.length > 0) {
-            return corners[Math.floor(Math.random() * corners.length)];
+            const corners = [0, 2, 6, 8].filter(index => this.board[index] === '');
+            if (corners.length > 0) {
+                return corners[Math.floor(Math.random() * corners.length)];
+            }
         }
 
         return availableMoves[Math.floor(Math.random() * availableMoves.length)];
@@ -148,8 +186,11 @@ class TicTacToe {
                 this.playSound('move');
 
                 if (this.checkWin()) {
+                    this.score.O += 1;
+                    this.updateScoreboard();
                     this.statusDisplay.textContent = 'Player O wins!';
                     this.gameActive = false;
+                    this.showOverlay('Player O Wins!', 'Press play again to start a new round.');
                     this.playSound('win');
                     return;
                 }
@@ -157,6 +198,7 @@ class TicTacToe {
                 if (this.checkDraw()) {
                     this.statusDisplay.textContent = 'Game ended in a draw!';
                     this.gameActive = false;
+                    this.showOverlay('Draw Game!', 'Nobody wins this round.');
                     this.playSound('draw');
                     return;
                 }
@@ -164,7 +206,7 @@ class TicTacToe {
                 this.currentPlayer = 'X';
                 this.statusDisplay.textContent = "Player X's turn";
             }
-        }, 800);
+        }, this.difficulty === 'hard' ? 700 : 1100);
     }
 
     handleCellClick(cell) {
@@ -183,8 +225,11 @@ class TicTacToe {
         this.playSound('move');
 
         if (this.checkWin()) {
+            this.score[this.currentPlayer] += 1;
+            this.updateScoreboard();
             this.statusDisplay.textContent = `Player ${this.currentPlayer} wins!`;
             this.gameActive = false;
+            this.showOverlay(`Player ${this.currentPlayer} Wins!`, 'Press play again to start a new round.');
             this.playSound('win');
             return;
         }
@@ -192,6 +237,7 @@ class TicTacToe {
         if (this.checkDraw()) {
             this.statusDisplay.textContent = 'Game ended in a draw!';
             this.gameActive = false;
+            this.showOverlay('Draw Game!', 'Nobody wins this round.');
             this.playSound('draw');
             return;
         }
@@ -220,6 +266,7 @@ class TicTacToe {
         this.board = Array(9).fill('');
         this.currentPlayer = 'X';
         this.gameActive = true;
+        this.hideOverlay();
         this.statusDisplay.textContent = `Player ${this.currentPlayer}'s turn`;
         this.cells.forEach(cell => {
             cell.textContent = '';

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe</title>
+    <title>Tic-Tac-Toe Game</title>
     <style>
         body {
             display: flex;
@@ -82,15 +82,33 @@
             color: white;
             margin-bottom: 20px;
             text-align: center;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            min-width: 300px;
+            box-sizing: border-box;
         }
 
-        .mode-controls {
+        .top-panel {
             display: flex;
-            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
             margin-bottom: 20px;
         }
 
-        .mode-button {
+        .mode-controls,
+        .difficulty-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .mode-button,
+        .difficulty-button {
             padding: 10px 16px;
             font-size: 1rem;
             border: none;
@@ -101,14 +119,85 @@
             transition: background-color 0.3s;
         }
 
-        .mode-button.active {
+        .mode-button.active,
+        .difficulty-button.active {
             background-color: yellowgreen;
             color: #111;
             font-weight: bold;
         }
 
-        .mode-button:hover {
+        .mode-button:hover,
+        .difficulty-button:hover {
             background-color: #666;
+        }
+
+        .scoreboard {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 15px;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .score-box {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 8px 14px;
+            border-radius: 8px;
+            min-width: 110px;
+            text-align: center;
+        }
+
+        .score-box strong {
+            display: block;
+            margin-top: 4px;
+            font-size: 1.5rem;
+            color: yellowgreen;
+        }
+
+        .board-wrapper {
+            position: relative;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.72);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 12px;
+        }
+
+        .overlay.show {
+            display: flex;
+        }
+
+        .overlay-content {
+            color: white;
+            padding: 20px;
+        }
+
+        .overlay-content h2 {
+            margin: 0 0 10px;
+            font-size: 2rem;
+        }
+
+        .overlay-content p {
+            margin: 0 0 15px;
+            font-size: 1.1rem;
+        }
+
+        .overlay-content button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: yellowgreen;
+            color: #111;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
         }
          /* reset hover button here */
         .reset-button {
@@ -131,24 +220,50 @@
     <div class="game-container">
         <div class="header">
             <div class="left-text">TIC-TAC-TOE</div>
-            <div class="right-text">GAME PLAY</div>
+            <div class="right-text">Tic-Tac-Toe Game</div>
         </div>
-        <h1 class="status" id="status">Player X's turn</h1>
-        <div class="mode-controls" aria-label="Game mode selection">
-            <button class="mode-button active" data-mode="2player">Player vs Player</button>
-            <button class="mode-button" data-mode="cpu">Player vs CPU</button>
+
+        <div class="scoreboard">
+            <div class="score-box">Player X<strong id="scoreX">0</strong></div>
+            <div class="score-box">Player O<strong id="scoreO">0</strong></div>
         </div>
-        <div class="board" id="board">
-            <div class="cell" data-index="0"></div>
-            <div class="cell" data-index="1"></div>
-            <div class="cell" data-index="2"></div>
-            <div class="cell" data-index="3"></div>
-            <div class="cell" data-index="4"></div>
-            <div class="cell" data-index="5"></div>
-            <div class="cell" data-index="6"></div>
-            <div class="cell" data-index="7"></div>
-            <div class="cell" data-index="8"></div>
+
+        <h1 class="status" id="status">Tic-Tac-Toe: Player X's turn</h1>
+
+        <div class="top-panel">
+            <div class="mode-controls" aria-label="Game mode selection">
+                <button class="mode-button active" data-mode="2player">Player vs Player</button>
+                <button class="mode-button" data-mode="cpu">Player vs CPU</button>
+            </div>
+
+            <div class="difficulty-controls" aria-label="Difficulty selection">
+                <button class="difficulty-button active" data-difficulty="easy">Easy</button>
+                <button class="difficulty-button" data-difficulty="hard">Hard</button>
+            </div>
         </div>
+
+        <div class="board-wrapper">
+            <div class="board" id="board">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+
+            <div class="overlay" id="gameOverlay">
+                <div class="overlay-content">
+                    <h2 id="overlayTitle">Player X Wins!</h2>
+                    <p id="overlayText">Press play to start a new round.</p>
+                    <button id="playAgainButton" type="button">Play Again</button>
+                </div>
+            </div>
+        </div>
+
         <button class="reset-button" id="resetButton">Reset Game</button>
     </div>
     <script src="game.js"></script>
