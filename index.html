@@ -62,10 +62,10 @@
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(3, 1fr);
             gap: 6px;
-            width: 64vmin;
-            height: 64vmin;
-            max-width: 500px;
-            max-height: 500px;
+            width: 78vmin;
+            height: 78vmin;
+            max-width: 680px;
+            max-height: 680px;
         }
 
         .cell {
@@ -74,7 +74,7 @@
             justify-content: center;
             border: 2px solid #333;
             background-color: #fff;
-            font-size: 6.4vmin;
+            font-size: clamp(2rem, 7.5vmin, 5rem);
             cursor: pointer;
             transition: background-color 0.3s;
         }
@@ -302,6 +302,7 @@
         .reset-button:hover {
             background-color: #7f8f66;
         }
+
     </style>
 </head>
 <body>
@@ -353,52 +354,6 @@
         </div>
 
         <button class="reset-button" id="resetButton">Reset Game</button>
-    </div>
-
-    <div class="dragon-wrap" aria-hidden="true">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img">
-            <defs>
-                <linearGradient id="dragonBody" x1="0%" x2="100%" y1="0%" y2="100%">
-                    <stop offset="0%" stop-color="#6ee7b7"/>
-                    <stop offset="100%" stop-color="#2563eb"/>
-                </linearGradient>
-                <linearGradient id="dragonWing" x1="0%" x2="100%" y1="0%" y2="100%">
-                    <stop offset="0%" stop-color="#c4b5fd"/>
-                    <stop offset="100%" stop-color="#7c3aed"/>
-                </linearGradient>
-            </defs>
-
-            <path d="M149 122c-9 18-23 31-42 38-22 9-48 8-64-12-17-21-15-51 6-67 18-15 37-19 62-11 20 7 36 27 38 52z" fill="url(#dragonBody)"/>
-            <path d="M97 41c-18-28-49-30-71-15 10 15 16 31 16 49 26-7 41-15 55-34z" fill="url(#dragonWing)" opacity="0.9"/>
-            <path d="M101 55c-41-21-77-6-95 18 17 7 41 9 67 4 12-2 23-9 28-22z" fill="url(#dragonWing)" opacity="0.7"/>
-            <path d="M130 147l44 20c8 4 12 14 8 22l-12 25-29-24 2-18-13-25z" fill="#111827"/>
-            <path d="M131 142l29-28 23 11-17 31-35-14z" fill="#e2e8f0"/>
-            <circle cx="134" cy="126" r="5" fill="#111827"/>
-            <path d="M142 128l19-14 7 9-19 13z" fill="#f8fafc"/>
-            <path d="M106 111l-18 26 14 9 18-23z" fill="#0f172a"/>
-            <path d="M84 95l-35-8 8 23 28-15z" fill="#a78bfa"/>
-            <path d="M117 79l-19 18 14 10 17-17z" fill="#0f172a"/>
-        </svg>
-    </div>
-
-    <div class="snake-wrap" aria-hidden="true">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img">
-            <defs>
-                <linearGradient id="snakeBody" x1="0%" x2="100%" y1="0%" y2="100%">
-                    <stop offset="0%" stop-color="#4ade80"/>
-                    <stop offset="100%" stop-color="#15803d"/>
-                </linearGradient>
-            </defs>
-            <path d="M32 125c0-19 14-35 33-35h18c17 0 31 14 31 31v18c0 19-15 35-34 35H58c-14 0-26-12-26-27v-22zm40-37c12 0 22 10 22 22v8c0 9-7 16-16 16h-14c-13 0-24-11-24-24v-4c0-10 8-18 18-18h14z" fill="url(#snakeBody)"/>
-            <path d="M90 80c9-13 21-20 36-22 11-2 20 2 27 9-11 0-19 4-27 10-11 9-16 20-18 33-13-7-21-18-18-30z" fill="#22c55e"/>
-            <path d="M112 100c8-7 19-11 30-12 0 16-6 29-18 38-11 9-23 13-36 15 6-16 14-28 24-41z" fill="#16a34a"/>
-            <circle cx="146" cy="91" r="7" fill="#0f172a"/>
-            <circle cx="146" cy="91" r="3" fill="#f8fafc"/>
-            <path d="M160 96l20-14 10 11-20 17z" fill="#0f172a"/>
-            <path d="M90 92l-4 12 15 8 12-10-23-10z" fill="#0f172a"/>
-            <path d="M54 143l16 20 12-10-17-21z" fill="#0f172a"/>
-            <path d="M77 155l18 18 10-12-18-19z" fill="#0f172a"/>
-        </svg>
     </div>
     <script src="game.js"></script>
 </body>
